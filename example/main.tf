@@ -1,13 +1,17 @@
 module "sgscanner" {
-  source    = "git@github.com:muffat/sgscanner.git"
+  source = "git@github.com:muffat/sgscanner.git"
 
-  iam_role_lambda = "arn:aws:iam::12345678:role/custom-lambda-role"
   function_name = "sgscanner"
+  description   = "This is an example"
 
   environment_variables = {
-    SLACK_URL = "https://hooks.slack.com/services/.."
-    SLACK_CHANNEL = "custom-slack-channel"
-    SLACK_USERNAME = "slack-username"
+    SLACK_URL      = "https://hooks.slack.com/.."
+    SLACK_USERNAME = "test"
+    SLACK_CHANNEL  = "production-issue"
+  }
+
+  tags = {
+    team = "my-team"
   }
 }
 

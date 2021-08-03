@@ -10,7 +10,7 @@ This module creates a Lambda function to scan Security group rules in AWS accoun
 
 ```tf
 module "sgscanner" {
-  source  = "muffat/sgscanner"
+  source  = "git@github.com:muffat/sgscanner.git"
 
   function_name = "sgscanner"
   description   = "This is an example"

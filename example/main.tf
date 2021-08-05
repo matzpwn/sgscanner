@@ -1,3 +1,6 @@
+/*
+Example of using the module
+*/
 module "sgscanner" {
   source = "git@github.com:muffat/sgscanner.git"
 
@@ -9,6 +12,12 @@ module "sgscanner" {
     SLACK_USERNAME = "test"
     SLACK_CHANNEL  = "production-issue"
   }
+
+  # If using the custom IAM role
+  role = "<put-IAM-role-arn-here>"
+
+  # If using the custom cron expression
+  schedule_expression = "cron(0 0 * * ? *)"
 
   tags = {
     team = "my-team"

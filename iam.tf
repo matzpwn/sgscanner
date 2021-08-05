@@ -1,3 +1,7 @@
+/*
+Define default IAM role & policy
+*/
+
 resource "aws_iam_role" "this" {
   name = "lambda-${var.function_name}"
 

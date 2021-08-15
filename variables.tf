@@ -1,4 +1,5 @@
 variable "function_name" {}
+variable "s3_bucket" {}
 variable "description" {
   default = "Security group scanner"
 }

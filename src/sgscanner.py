@@ -37,7 +37,7 @@ def lambda_handler(event, context):
                                 sg_ids.append(SecurityGroupId)
                                 sg_ports.append(j['FromPort'])
                                 sg_ips.append(d)
-            except IndexError:
+            except:
                 pass
 
     slack_content = []

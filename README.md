@@ -1,3 +1,5 @@
+## Buy Me A [Coffee ☕️](https://www.buymeacoffee.com/devopsid)
+
 # sgscanner
 
 This module creates a Lambda function to scan Security group rules in AWS account and will notify users to Slack channel when detects non-compliant rule.
@@ -16,9 +18,15 @@ module "sgscanner" {
   description   = "This is an example"
 
   environment_variables = {
-    SLACK_URL = "https://hooks.slack.com/.."
+    SLACK_URL      = "https://hooks.slack.com/.."
     SLACK_USERNAME = "test"
-    SLACK_CHANNEL = "production-issue"
+    SLACK_CHANNEL  = "slack-channel-name"
+  }
+
+  # Find the non-compliant IP address and port
+  finder = {
+    "0.0.0.0/0" = 22,
+    "172.0.0.0/8" = [80, 8080]
   }
 
   tags = {
@@ -36,6 +44,7 @@ module "sgscanner" {
 | environment_variables | Environment variables list to include the SLACK details. `SLACK_URL`, `SLACK_USERNAME`, and `SLACK_CHANNEL` | `map(string)` | `null` | yes |
 | schedule_expression | Cloudwatch event custom cron expression | `string` | `cron(0 0 * * ? *)` | no |
 | role | A custom IAM role arn | `string` | `null` | no |
+| finder | A map of IP address and port to find | `map(string)` | `{}` | no |
 | tags | A map of tags to add to lambda function | `map(string)` | `{}` | no |
 
 ## License

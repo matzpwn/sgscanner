@@ -1,10 +1,27 @@
 /*
-Zip the code on the fly
+Write the Security group rules
+*/
+resource "null_resource" "config" {
+  provisioner "local-exec" {
+    command = "echo '${jsonencode(var.finder)}' > ${path.module}/src/sg.config"
+  }
+
+  triggers = {
+    config_contents = jsonencode(var.finder)
+  }
+}
+
+/*
+Zip the code
 */
 data "archive_file" "source" {
   type        = "zip"
   source_dir  = "${path.module}/src"
   output_path = "sgscanner.zip"
+
+  depends_on = [
+    null_resource.config
+  ]
 }
 
 /*
@@ -39,6 +56,10 @@ Clean up local path
 resource "null_resource" "this" {
   provisioner "local-exec" {
     command = "rm -f sgscanner.zip"
+  }
+
+  triggers = {
+    config_contents = aws_lambda_function.main.source_code_hash
   }
 
   depends_on = [

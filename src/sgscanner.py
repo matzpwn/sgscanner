@@ -12,24 +12,49 @@ def lambda_handler(event, context):
 
     client = boto3.client('ec2')
     response = client.describe_security_groups()
-    defects = []
 
+    config = open("sg.config", "r")
+    a = config.read()
+    b = json.loads(a)
+
+    sg_ports = []
+    sg_ids = []
+    sg_ips = []
     for i in response['SecurityGroups']:
-        SecurityGroupName = i['GroupName']
+        SecurityGroupId = i['GroupId']
         for j in i['IpPermissions']:
             try:
-                for k in j['IpRanges']:
-                    if k['CidrIp'] == "0.0.0.0/0":
-                        ifFound = True
-                        if SecurityGroupName not in defects:
-                            defects.append(SecurityGroupName)
-            except Exception:
-                continue
+                for d in b:
+                    theport = b[d]
+                    if type(theport) == int:
+                        thisport = []
+                        thisport.append(theport)
+                    else:
+                        thisport = theport
+                    if j['IpRanges'][0]['CidrIp'] == d:
+                        if j['FromPort'] in thisport:
+                            if j['FromPort'] not in sg_ports:
+                                sg_ids.append(SecurityGroupId)
+                                sg_ports.append(j['FromPort'])
+                                sg_ips.append(d)
+            except IndexError:
+                pass
 
-    if len(defects) > 0:
-        this_sg = ",".join(defects)
+    slack_content = []
+    x = 0
+    for finding in sg_ports:
+        if x == len(sg_ports)-1:
+            slack_content.append("+ Found `%s:%s` in `%s`" %
+                                 (sg_ips[x], sg_ports[x], sg_ids[x]))
+        else:
+            slack_content.append("+ Found `%s:%s` in `%s`\n" %
+                                 (sg_ips[x], sg_ports[x], sg_ids[x]))
+        x = x + 1
+
+    if len(sg_ids) > 0:
+        slack_content = "".join(slack_content)
         post = {
-            "text": "`0.0.0.0/0` found in Security group `%s`" % (this_sg),
+            "text": slack_content,
             "channel": SLACK_CHANNEL,
             "username": SLACK_USERNAME
         }

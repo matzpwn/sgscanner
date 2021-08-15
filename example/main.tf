@@ -10,7 +10,12 @@ module "sgscanner" {
   environment_variables = {
     SLACK_URL      = "https://hooks.slack.com/.."
     SLACK_USERNAME = "test"
-    SLACK_CHANNEL  = "production-issue"
+    SLACK_CHANNEL  = "slack-channel-name"
+  }
+
+  finder = {
+    "0.0.0.0/0" = 443,
+    "172.0.0.0/8" = 80
   }
 
   # If using the custom IAM role

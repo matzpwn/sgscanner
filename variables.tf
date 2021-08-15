@@ -1,6 +1,6 @@
 variable "function_name" {}
 variable "description" {
-  default = ""
+  default = "Security group scanner"
 }
 variable "environment_variables" {
   default = null
@@ -10,6 +10,9 @@ variable "schedule_expression" {
 }
 variable "role" {
   default = null
+}
+variable "finder" {
+  default = {}
 }
 variable "tags" {
   default = {}

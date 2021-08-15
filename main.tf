@@ -31,7 +31,7 @@ resource "aws_lambda_function" "main" {
   function_name    = var.function_name
   description      = var.description
   filename         = "sgscanner.zip"
-  role             = var.role == null ? aws_iam_role.this.arn : var.role
+  role             = var.role != null ? var.role : aws_iam_role.this[0].arn
   handler          = "sgscanner.lambda_handler"
   runtime          = "python3.8"
   source_code_hash = data.archive_file.source.output_base64sha256

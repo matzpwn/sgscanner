@@ -16,6 +16,7 @@ module "sgscanner" {
 
   function_name = "sgscanner"
   description   = "This is an example"
+  s3_bucket     = "bucket-name"
 
   environment_variables = {
     SLACK_URL      = "https://hooks.slack.com/.."
@@ -25,8 +26,8 @@ module "sgscanner" {
 
   # Find the non-compliant IP address and port
   finder = {
-    "0.0.0.0/0" = 22,
-    "172.0.0.0/8" = [80, 8080]
+    "0.0.0.0/0"   = [22, 443],
+    "172.0.0.0/8" = 80
   }
 
   tags = {
@@ -41,6 +42,7 @@ module "sgscanner" {
 |------|-------------|------|---------|:--------:|
 | function_name | Lambda function name | `string` | `` | yes |
 | description | Some descriptions | `string` | `` | no |
+| s3_bucket | S3 bucket name to store the lambda object | `string` | `` | yes |
 | environment_variables | Environment variables list to include the SLACK details. `SLACK_URL`, `SLACK_USERNAME`, and `SLACK_CHANNEL` | `map(string)` | `null` | yes |
 | schedule_expression | Cloudwatch event custom cron expression | `string` | `cron(0 0 * * ? *)` | no |
 | role | A custom IAM role arn | `string` | `null` | no |

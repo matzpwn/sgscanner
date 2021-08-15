@@ -17,11 +17,20 @@ Zip the code
 data "archive_file" "source" {
   type        = "zip"
   source_dir  = "${path.module}/src"
-  output_path = "sgscanner.zip"
+  output_path = "${path.module}/sgscanner.zip"
 
   depends_on = [
     null_resource.config
   ]
+}
+
+/*
+Upload to s3
+*/
+resource "aws_s3_bucket_object" "this" {
+  bucket = var.s3_bucket
+  key    = "sgscanner.zip"
+  source = data.archive_file.source.output_path
 }
 
 /*
@@ -30,7 +39,8 @@ Define lambda function
 resource "aws_lambda_function" "main" {
   function_name    = var.function_name
   description      = var.description
-  filename         = "sgscanner.zip"
+  s3_bucket        = var.s3_bucket
+  s3_key           = aws_s3_bucket_object.this.key
   role             = var.role != null ? var.role : aws_iam_role.this[0].arn
   handler          = "sgscanner.lambda_handler"
   runtime          = "python3.8"
@@ -55,7 +65,7 @@ Clean up local path
 */
 resource "null_resource" "this" {
   provisioner "local-exec" {
-    command = "rm -f sgscanner.zip"
+    command = "rm -f ${path.module}/sgscanner.zip"
   }
 
   triggers = {

@@ -6,6 +6,7 @@ module "sgscanner" {
 
   function_name = "sgscanner"
   description   = "This is an example"
+  s3_bucket     = "<bucket-name>"
 
   environment_variables = {
     SLACK_URL      = "https://hooks.slack.com/.."
@@ -14,7 +15,7 @@ module "sgscanner" {
   }
 
   finder = {
-    "0.0.0.0/0" = 443,
+    "0.0.0.0/0"   = [22, 443],
     "172.0.0.0/8" = 80
   }
 

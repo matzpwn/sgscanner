@@ -14,44 +14,27 @@ def lambda_handler(event, context):
     response = client.describe_security_groups()
 
     config = open("sg.config", "r")
-    a = config.read()
-    b = json.loads(a)
+    config_read = config.read()
+    config_load = json.loads(config_read)
 
-    sg_ports = []
-    sg_ids = []
-    sg_ips = []
+    slack_content = []
     for i in response['SecurityGroups']:
         SecurityGroupId = i['GroupId']
         for j in i['IpPermissions']:
             try:
-                for d in b:
-                    theport = b[d]
-                    if type(theport) == int:
-                        thisport = []
-                        thisport.append(theport)
-                    else:
-                        thisport = theport
-                    if j['IpRanges'][0]['CidrIp'] == d:
-                        if j['FromPort'] in thisport:
-                            if j['FromPort'] not in sg_ports:
-                                sg_ids.append(SecurityGroupId)
-                                sg_ports.append(j['FromPort'])
-                                sg_ips.append(d)
+                this_ip = j['IpRanges'][0]['CidrIp']
+                this_port = j['FromPort']
+                for key in config_load:
+                    if key == this_ip:
+                        if this_port in config_load[this_ip]:
+                            sg_finding = "+ Found `%s:%s` in `%s`" % (
+                                this_ip, this_port, SecurityGroupId)
+                            if sg_finding not in slack_content:
+                                slack_content.append(sg_finding)
             except:
                 pass
 
-    slack_content = []
-    x = 0
-    for finding in sg_ports:
-        if x == len(sg_ports)-1:
-            slack_content.append("+ Found `%s:%s` in `%s`" %
-                                 (sg_ips[x], sg_ports[x], sg_ids[x]))
-        else:
-            slack_content.append("+ Found `%s:%s` in `%s`\n" %
-                                 (sg_ips[x], sg_ports[x], sg_ids[x]))
-        x = x + 1
-
-    if len(sg_ids) > 0:
+    if len(slack_content) > 0:
         slack_content = "".join(slack_content)
         post = {
             "text": slack_content,

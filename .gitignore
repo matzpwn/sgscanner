@@ -5,3 +5,4 @@ terraform.tfstate.backup
 sgscanner.zip
 .terraform.tfstate.lock.info
 sg.config
+tes.py

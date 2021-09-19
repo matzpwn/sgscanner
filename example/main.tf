@@ -12,6 +12,7 @@ module "sgscanner" {
     SLACK_URL      = "https://hooks.slack.com/.."
     SLACK_USERNAME = "test"
     SLACK_CHANNEL  = "slack-channel-name"
+    TAG_EXCEPTION  = "tag-key,tag-value"
   }
 
   finder = {
